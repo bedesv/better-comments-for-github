@@ -22,17 +22,10 @@ export default defineContentScript({
     })
     cmWorker.mount()
 
-    // Firefox does not support injecting content scripts via injectScript yet
-    // Manifest V3?
-    if (import.meta.env.FIREFOX) {
-      const script = document.createElement('script')
-      script.src = browser.runtime.getURL('/editor-content.js')
-      script.type = 'text/javascript'
-      ;(document.head || document.documentElement).appendChild(script)
-    } else {
-      await injectScript('/editor-content.js', {
-        keepInDom: false,
-      })
-    }
+    // Inject as ES module to enable code splitting
+    const script = document.createElement('script')
+    script.src = browser.runtime.getURL('/editor-content.js')
+    script.type = 'module'
+    ;(document.head || document.documentElement).appendChild(script)
   },
 })
